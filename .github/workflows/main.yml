@@ -1,0 +1,38 @@
+name: Build driver libs
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Compile x86
+      run: |
+        mkdir _build_x86
+        cd _build_x86
+        cmake .. -A win32
+        cmake --build . --config RelWithDebInfo
+    - name: Compile x64
+      run: |
+        mkdir _build_x64
+        cd _build_x64
+        cmake .. -A x64
+        cmake --build . --config RelWithDebInfo
+    - name: Collect outputs
+      run: |
+        mkdir _output
+        mkdir _output/x86
+        mkdir _output/x64
+        cp _build_x86\RelWithDebInfo\vcrtl_driver.lib _output\x86
+        cp _build_x86\vcrtl_driver.dir\RelWithDebInfo\vcrtl_driver.pdb _output\x86
+        cp _build_x64\RelWithDebInfo\vcrtl_driver.lib _output\x64
+        cp _build_x64\vcrtl_driver.dir\RelWithDebInfo\vcrtl_driver.pdb _output\x64
+        cp build\vcrtl_driver.props _output
+    - name: Upload x64
+      uses: actions/upload-artifact@v1
+      with:
+        name: output
+        path: _output
