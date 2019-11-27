@@ -8,7 +8,7 @@ platforms are supported.
 
 To use exceptions in your kernel-mode driver, first
 
-* download the binaries, and then
+* [download the binaries](https://github.com/avakar/vcrtl/releases), and then
 * add `vcrtl_driver.props` to your driver project.
 
 C++ exceptions will magically work.
