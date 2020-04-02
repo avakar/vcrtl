@@ -6,6 +6,8 @@ project(vcrtl CXX ASM_MASM)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build)
 find_package(WDK REQUIRED)
 
+list(REMOVE_ITEM WDK_COMPILE_FLAGS /kernel)
+
 wdk_add_library(vcrtl_driver STATIC
     src/algorithm.h
     src/assert.cpp
@@ -51,3 +53,6 @@ list(APPEND CMAKE_ASM_MASM_FLAGS "/safeseh")
 endif()
 
 target_compile_features(vcrtl_driver PUBLIC cxx_std_17)
+
+wdk_add_driver(vcrtl_driver_test test/test.cpp)
+target_link_libraries(vcrtl_driver_test vcrtl_driver)

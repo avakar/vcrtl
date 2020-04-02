@@ -9,13 +9,6 @@ using namespace vcrtl::_msvc::x64;
 extern "C" void __cxx_call_catch_handler();
 extern "C" symbol __ImageBase;
 
-namespace vcrtl::_msvc::x64 {
-
-symbol unwind_cookie;
-symbol rethrow_probe_cookie;
-
-}
-
 namespace {
 
 struct _catch_frame_t
@@ -26,6 +19,11 @@ struct _catch_frame_t
 };
 
 }
+
+namespace vcrtl::_msvc::x64 {
+
+symbol unwind_cookie;
+symbol rethrow_probe_cookie;
 
 bool process_catch_block(byte const * image_base, flags<cxx_catch_flag> adjectives,
 	type_info const * match_type, void * catch_var, void * exception_object, cxx_throw_info const & throw_info)
@@ -195,6 +193,8 @@ void probe_for_exception_object(
 			break;
 		pdata.unwind(*unwind_info, probe_ctx, probe_mach);
 	}
+}
+
 }
 
 extern "C" x64_frame_handler_t __cxx_seh_frame_handler;
