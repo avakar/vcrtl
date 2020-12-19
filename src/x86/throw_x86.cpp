@@ -3,7 +3,7 @@
 #include "../algorithm.h"
 #include "../stdint.h"
 #include "eh_structs_x86.h"
-#include "../bugcheck.h"
+#include "../../include/vcrtl/bugcheck.h"
 #include "../rva.h"
 #include "../win32_seh.h"
 

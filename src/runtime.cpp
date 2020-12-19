@@ -1,4 +1,4 @@
-#include "bugcheck.h"
+#include "../include/vcrtl/bugcheck.h"
 #include "stddef.h"
 using namespace vcrtl;
 

@@ -3,16 +3,11 @@ cmake_policy(SET CMP0091 OLD)
 
 project(vcrtl CXX ASM_MASM)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/build)
-find_package(WDK REQUIRED)
-
-list(REMOVE_ITEM WDK_COMPILE_FLAGS /kernel)
-
-wdk_add_library(vcrtl_driver STATIC
+add_library(libvcrtl STATIC
+    include/vcrtl/bugcheck.h
     src/algorithm.h
     src/assert.cpp
     src/assert.h
-    src/bugcheck.h
     src/flags.h
     src/intrin.h
     src/limits.h
@@ -28,9 +23,13 @@ wdk_add_library(vcrtl_driver STATIC
     src/utils.h
     src/win32_seh.h
     )
+target_include_directories(libvcrtl INTERFACE include)
+target_compile_features(libvcrtl PUBLIC cxx_std_17)
+target_compile_options(libvcrtl PRIVATE "/GS-")
+set_target_properties(libvcrtl PROPERTIES VS_USER_PROPS "${CMAKE_CURRENT_SOURCE_DIR}/build/no_rtc.props")
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-target_sources(vcrtl_driver PUBLIC
+if ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL x64)
+target_sources(libvcrtl PRIVATE
     src/x64/capture.asm
     src/x64/cpu_context.h
     src/x64/eh_structs_x64.h
@@ -40,8 +39,8 @@ target_sources(vcrtl_driver PUBLIC
     src/x64/throw.h
     src/x64/unwind_handler.cpp
     )
-else()
-target_sources(vcrtl_driver PUBLIC
+elseif ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL Win32)
+target_sources(libvcrtl PRIVATE
     src/x86/eh_helpers.asm
     src/x86/eh_structs_x86.h
     src/x86/fh3_x86.asm
@@ -50,9 +49,22 @@ target_sources(vcrtl_driver PUBLIC
     src/x86/throw_x86.cpp
     )
 list(APPEND CMAKE_ASM_MASM_FLAGS "/safeseh")
+else()
+message(FATAL_ERROR "unsupported platform")
 endif()
 
-target_compile_features(vcrtl_driver PUBLIC cxx_std_17)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build)
+find_package(WDK)
+if (WDK_FOUND)
+
+list(REMOVE_ITEM WDK_COMPILE_FLAGS /kernel)
+
+wdk_add_library(vcrtl_driver STATIC
+    src/ntos_bugcheck.cpp
+    )
+target_link_libraries(vcrtl_driver PUBLIC libvcrtl)
 
 wdk_add_driver(vcrtl_driver_test test/test.cpp)
 target_link_libraries(vcrtl_driver_test vcrtl_driver)
+
+endif()

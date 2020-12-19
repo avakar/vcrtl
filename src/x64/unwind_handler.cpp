@@ -1,5 +1,5 @@
 #include "cpu_context.h"
-#include "../bugcheck.h"
+#include "../../include/vcrtl/bugcheck.h"
 #include "../assert.h"
 #include "../stdint.h"
 using namespace vcrtl;
