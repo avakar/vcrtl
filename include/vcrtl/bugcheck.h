@@ -20,9 +20,12 @@ enum class bug_check_reason
 	assertion_failure,
 	forbidden_call,
 	std_terminate,
+
+	rtc_esp_corruption,
+	rtc_canary_corruption,
 };
 
-[[noreturn]] void on_bug_check(bug_check_reason reason);
+[[noreturn]] void __fastcall on_bug_check(bug_check_reason reason);
 
 }
 
