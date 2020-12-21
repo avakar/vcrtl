@@ -53,6 +53,13 @@ add_library(vcrtl::rtc ALIAS vcrtl_rtc)
 
 
 
+add_library(vcrtl_gs STATIC
+    src/gs/cookie.cpp
+    )
+target_compile_features(vcrtl_rtc PUBLIC cxx_std_17)
+add_library(vcrtl::gs ALIAS vcrtl_gs)
+
+
 add_library(vcrtl_ehs STATIC
     src/algorithm.h
     src/assert.cpp

@@ -23,6 +23,8 @@ enum class bug_check_reason
 
 	rtc_esp_corruption,
 	rtc_canary_corruption,
+
+	gs_failure,
 };
 
 [[noreturn]] void __fastcall on_bug_check(bug_check_reason reason);
